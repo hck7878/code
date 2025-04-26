@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Hosting Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white p-8 rounded shadow-md">
+        <h1 class="text-2xl font-bold mb-4">Code Hosting Platform</h1>
+        <div class="mb-4">
+            <label for="filename" class="block text-sm font-medium text-gray-700">Filename:</label>
+            <input type="text" id="filename" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        </div>
+        <div class="mb-4">
+            <label for="code" class="block text-sm font-medium text-gray-700">Code:</label>
+            <textarea id="code" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+        </div>
+        <button id="upload-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Upload</button>
+        <button id="download-btn" class="ml-2 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Download</button>
+    </div>
+
+    <script>
+        const uploadBtn = document.getElementById('upload-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const filenameInput = document.getElementById('filename');
+        const codeInput = document.getElementById('code');
+
+        uploadBtn.addEventListener('click', async () => {
+            const filename = filenameInput.value;
+            const code = codeInput.value;
+            if (filename && code) {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ filename, code })
+                });
+                const data = await response.json();
+                alert(data.message);
+            } else {
+                alert('Please enter filename and code');
+            }
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            const filename = filenameInput.value;
+            if (filename) {
+                const response = await fetch(`/download/${filename}`);
+                const data = await response.json();
+                if (data.code) {
+                    codeInput.value = data.code;
+                } else {
+                    alert(data.message);
+                }
+            } else {
+                alert('Please enter filename');
+            }
+        });
+    </script>
+</body>
+</html>
+    
